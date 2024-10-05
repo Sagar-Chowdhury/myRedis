@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebSocket Pub/Sub Client</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5">
+    <div class="card">
+      <div class="card-body">
+        <h1 class="card-title text-center">WebSocket Pub/Sub Client</h1>
+        <div class="d-flex justify-content-center mb-3">
+          <button id="subscribe" class="btn btn-primary me-2">Subscribe to news</button>
+          <button id="publish" class="btn btn-success">Publish to news</button>
+        </div>
+        <ul id="messages" class="list-group">
+          <!-- Messages will appear here -->
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ws = new WebSocket('ws://localhost:8080');
+    const messages = document.getElementById('messages');
+
+    ws.onopen = () => {
+      console.log('Connected to WebSocket server');
+    };
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      const li = document.createElement('li');
+      li.className = "list-group-item";
+      li.textContent = `Received on ${data.channel}: ${data.message}`;
+      messages.appendChild(li);
+    };
+
+    document.getElementById('subscribe').onclick = () => {
+      ws.send(JSON.stringify({ action: 'subscribe', channel: 'news' }));
+    };
+
+    document.getElementById('publish').onclick = () => {
+      ws.send(JSON.stringify({ action: 'publish', channel: 'news', message: 'Hello from the browser!' }));
+    };
+  </script>
+  
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

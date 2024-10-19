@@ -1,8 +1,13 @@
 const Redis = require('./redis');
 const readline = require('readline')
+const minimist = require('minimist');
+
+
+const args = minimist(process.argv.slice(2));
+console.log(args);
 
 const redis = new Redis();
-redis.startSnapshotInterval(15);
+//redis.startSnapshotInterval(15);
 
 
 const rl = readline.createInterface({

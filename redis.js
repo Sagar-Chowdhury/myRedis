@@ -1,7 +1,13 @@
 const fs = require("fs").promises;
-const path = require('path');
-const SNAPSHOT_FILE = path.join('D:', 'myOwnRedis', 'myRedis', 'backupData', 'backup.json');
-
+const _fs = require("fs");
+const path = require("path");
+const SNAPSHOT_FILE = path.join(
+  "D:",
+  "myOwnRedis",
+  "myRedis",
+  "backupData",
+  "backup.json"
+);
 
 class Redis {
   constructor(memoryLimit = 50 * 1024 * 1024, evictionPolicy = "LRU") {
@@ -76,16 +82,16 @@ class Redis {
     try {
       // Check if file exists by using fs.access, which will throw an error if the file does not exist
       await fs.access(SNAPSHOT_FILE);
-      
-       fs.stat(SNAPSHOT_FILE, (err, fileStats) => {
+
+      _fs.stat(SNAPSHOT_FILE, (err, fileStats) => {
         if (err) {
-          console.log(err)
+          console.log(err);
         } else {
-          const result = convertBytes(fileStats.size)
-          console.log("File Size of Loaded Snapshot: ",result);
-          
+          const result = this.convertBytes(fileStats.size);
+          console.log("File Size of Loaded Snapshot: ", result);
+          this.currentMemoryUseage = fileStats.size;
         }
-      })
+      });
 
       // If no error, the file exists, proceed to read it
       const snapshotData = await fs.readFile(SNAPSHOT_FILE, "utf-8");
@@ -106,22 +112,20 @@ class Redis {
   }
 
   convertBytes(bytes) {
-    const sizes = ["Bytes", "KB", "MB", "GB", "TB"]
-  
-    if (bytes == 0) {
-      return "n/a"
-    }
-  
-    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
-  
-    if (i == 0) {
-      return bytes + " " + sizes[i]
-    }
-  
-    return (bytes / Math.pow(1024, i)).toFixed(1) + " " + sizes[i]
-  }
-  
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
 
+    if (bytes == 0) {
+      return "n/a";
+    }
+
+    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+
+    if (i == 0) {
+      return bytes + " " + sizes[i];
+    }
+
+    return (bytes / Math.pow(1024, i)).toFixed(1) + " " + sizes[i];
+  }
 
   async saveSnapShot() {
     const snapshotData = {

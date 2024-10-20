@@ -31,7 +31,7 @@ class Redis {
     }
 
     this.data[key] = value;
-    this.currentMemoryUseage += keySize;
+    this.currentMemoryUseage += keyValuePairSize;
 
     if (expiryTime) {
       const expireAt = Date.now() + expiryTime * 1000;
